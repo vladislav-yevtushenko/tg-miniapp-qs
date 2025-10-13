@@ -9,4 +9,10 @@ from app.schemas.user import User
 
 async def get_current_user(_: AsyncSession = Depends(get_db)) -> User:
     """Placeholder current-user dependency until auth is implemented."""
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Authentication not yet implemented")
+    # raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Authentication not yet implemented")
+    return User(
+        id=1,
+        telegram_id=123456789,
+        username="testuser",
+        first_name="Test",
+    )

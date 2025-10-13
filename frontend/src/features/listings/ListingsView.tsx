@@ -1,19 +1,32 @@
-import { ListingCard } from '@/components/listings/ListingCard'
-import { useListings } from '@/hooks/useListings'
+import { ListingCard } from "@/components/listings/ListingCard";
+import { useListings } from "@/hooks/useListings";
+import { useEffect } from "react";
 
 export const ListingsView = () => {
-  const { data: listings, isLoading, error } = useListings()
+  const { data: listings, isLoading, error } = useListings();
+
+  useEffect(() => {
+    console.log("Listings data:", listings);
+  }, [listings]);
 
   if (isLoading) {
-    return <p className="status-message">Loading listings…</p>
+    return <p className="status-message">Loading listings…</p>;
   }
 
   if (error) {
-    return <p className="status-message status-message--error">Failed to load listings.</p>
+    return (
+      <p className="status-message status-message--error">
+        Failed to load listings.
+      </p>
+    );
   }
 
   if (!listings?.length) {
-    return <p className="status-message">No listings yet. Be the first to add one!</p>
+    return (
+      <p className="status-message">
+        No listings yet. Be the first to add one!
+      </p>
+    );
   }
 
   return (
@@ -22,5 +35,5 @@ export const ListingsView = () => {
         <ListingCard key={listing.id} listing={listing} />
       ))}
     </section>
-  )
-}
+  );
+};

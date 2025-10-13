@@ -6,13 +6,20 @@ import { fileURLToPath, URL } from "node:url";
 export default defineConfig(({ command, mode }) => {
   console.log(`Running Vite in ${mode} mode (${command})`);
   const env = loadEnv(mode, process.cwd(), "");
+  console.log("Environment Variables:", env);
   return {
     plugins: [react()],
     server: {
-      allowedHosts: [".ngrok-free.dev"],
+      allowedHosts: [".audiohookserver.uk", "localhost"],
+      port: 8765,
       proxy: {
-        "/api/v1/": {
-          target: env.VITE_APP_API_URL,
+        "/health": {
+          target: env.VITE_APP_API_URL + "/api/v1/",
+          changeOrigin: false,
+          secure: false,
+        },
+        "/listings": {
+          target: env.VITE_APP_API_URL + "/api/v1/",
           changeOrigin: true,
           secure: false,
         },

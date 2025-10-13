@@ -1,11 +1,9 @@
-import axios from 'axios'
-
-import { env } from '@/config/env'
+import axios from "axios";
 
 export const apiClient = axios.create({
-  baseURL: env.apiBaseUrl,
+  baseURL: "",
   timeout: 10_000,
-})
+});
 
 apiClient.interceptors.response.use(
   (response) => response,
@@ -13,9 +11,9 @@ apiClient.interceptors.response.use(
     if (error.response) {
       return Promise.reject({
         status: error.response.status,
-        message: error.response.data?.detail ?? 'Unknown error',
-      })
+        message: error.response.data?.detail ?? "Unknown error",
+      });
     }
-    return Promise.reject(error)
+    return Promise.reject(error);
   },
-)
+);

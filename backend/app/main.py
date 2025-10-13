@@ -17,9 +17,4 @@ app.add_middleware(
 )
 
 
-@app.get("/health", tags=["health"])
-async def readiness_probe() -> dict[str, str]:
-    return {"status": "ok"}
-
-
 app.include_router(api_router, prefix=settings.api_v1_prefix)
