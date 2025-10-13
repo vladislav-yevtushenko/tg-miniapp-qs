@@ -15,7 +15,10 @@ class TelegramAuthError(HTTPException):
     """Raised when Telegram authentication data is invalid."""
 
     def __init__(self) -> None:
-        super().__init__(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Telegram auth data")
+        super().__init__(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid Telegram auth data",
+        )
 
 
 def _compute_hash(data_check_string: str) -> str:
@@ -34,6 +37,25 @@ def verify_telegram_auth(init_data: str) -> dict[str, Any]:
     if _compute_hash(data_check_string) != hash_value:
         raise TelegramAuthError()
 
+    try:
+        return json.loads(parsed["user"])
+    except (KeyError, json.JSONDecodeError) as exc:
+        raise TelegramAuthError() from exc
+
+
+def fake_verify_telegram_auth(init_data: str) -> dict[str, Any]:
+    """Fake verification for testing purposes."""
+    fakeUser = {
+        "id": 123456789,
+        "first_name": "Test",
+        "last_name": "User",
+        "username": "testuser",
+        "language_code": "en",
+        "is_premium": False,
+        "photo_url": "https://example.com/photo.jpg",
+    }
+    parsed = dict(parse_qsl(init_data, keep_blank_values=True))
+    parsed["user"] = json.dumps(fakeUser)
     try:
         return json.loads(parsed["user"])
     except (KeyError, json.JSONDecodeError) as exc:
