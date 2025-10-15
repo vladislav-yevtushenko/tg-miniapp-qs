@@ -34,6 +34,15 @@ async def list_listings(_: User = Depends(get_current_user)) -> list[Listing]:
             currency="KZT",
             created_at=datetime(2023, 2, 1, 15, 30, 0),
         ),
+        Listing(
+            id=3,
+            seller_id=3,
+            title="Ищу напарника для совместных тренировок",
+            description="Хочу найти человека, с которым можно будет вместе заниматься спортом.",
+            price_minor_units=1,
+            currency="KZT",
+            created_at=datetime(2023, 2, 1, 15, 30, 0),
+        ),
     ]
 
 

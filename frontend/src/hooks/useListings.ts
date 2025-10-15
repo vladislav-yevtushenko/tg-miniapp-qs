@@ -11,6 +11,7 @@ type ListingApiResponse = {
   currency: string;
   seller_id: number;
   created_at: string;
+  photo_url?: string | null;
 };
 
 const transformListing = (listing: ListingApiResponse): Listing => ({
@@ -21,6 +22,9 @@ const transformListing = (listing: ListingApiResponse): Listing => ({
   currency: listing.currency,
   sellerId: listing.seller_id,
   createdAt: listing.created_at,
+  photoUrl:
+    listing.photo_url ??
+    `https://picsum.photos/seed/listing-${listing.id}/200/200`,
 });
 
 const formatPrice = (listing: Listing): ListingViewModel => ({

@@ -1,5 +1,7 @@
-import { ListingCard } from "@/components/listings/ListingCard";
-import { useListings } from "@/hooks/useListings";
+import { Stack } from "@chakra-ui/react";
+import { ListingCard } from "components/listings/ListingCard";
+import { useListings } from "hooks/useListings";
+
 import { useEffect } from "react";
 
 export const ListingsView = () => {
@@ -30,10 +32,10 @@ export const ListingsView = () => {
   }
 
   return (
-    <section className="listings-grid">
+    <Stack as="section" gap={4}>
       {listings.map((listing) => (
         <ListingCard key={listing.id} listing={listing} />
       ))}
-    </section>
+    </Stack>
   );
 };

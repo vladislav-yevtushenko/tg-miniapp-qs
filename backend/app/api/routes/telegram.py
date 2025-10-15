@@ -1,5 +1,6 @@
 """Telegram related endpoints."""
 
+import logging
 from fastapi import APIRouter, HTTPException, status
 
 from app.schemas.telegram import TelegramAuthRequest, TelegramAuthResponse, TelegramUser
@@ -11,6 +12,8 @@ from app.services.telegram import (
 
 router = APIRouter()
 
+log = logging.getLogger(__name__)
+
 
 @router.post(
     "/auth",
@@ -19,6 +22,7 @@ router = APIRouter()
 )
 async def authenticate(payload: TelegramAuthRequest) -> TelegramAuthResponse:
     """Validate Telegram init data and return the parsed user payload."""
+    print(f"Payload: {payload}")
     try:
         # user_payload = verify_telegram_auth(payload.init_data)
         user_payload = fake_verify_telegram_auth(payload.init_data)

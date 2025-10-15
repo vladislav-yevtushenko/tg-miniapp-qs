@@ -1,7 +1,6 @@
-import { AppLayout } from "@/components/layout/AppLayout";
-import { ListingsView } from "@/features/listings/ListingsView";
-import { useTelegramContext } from "@/providers/telegramContext";
-
+import { AppLayout } from "components/layout/AppLayout";
+import { ListingsView } from "features/listings/ListingsView";
+import { useTelegramContext } from "providers/telegramContext";
 import "./App.css";
 
 const App = () => {

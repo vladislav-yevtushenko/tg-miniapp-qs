@@ -6,6 +6,7 @@ export type Listing = {
   currency: string
   sellerId: number
   createdAt: string
+  photoUrl: string | null
 }
 
 export type ListingViewModel = Listing & {
