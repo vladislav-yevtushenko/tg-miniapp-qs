@@ -18,7 +18,7 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
   const cards = Children.toArray(children);
 
   return (
-    <Flex direction="column" minHeight="100vh" bg="gray.50">
+    <Flex direction="column" height="100vh" bg="gray.50">
       <Box as="main" flex="1" overflowY="auto" py={6}>
         <Container maxW="container.md">
           {cards.length > 0 ? (
