@@ -1,11 +1,14 @@
 import { Stack } from "@chakra-ui/react";
 import { ListingCard } from "components/listings/ListingCard";
+import { ListingDetail } from "components/listings/ListingDetail";
 import { useListings } from "hooks/useListings";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { ListingViewModel } from "@/types/listing";
 
 export const ListingsView = () => {
   const { data: listings, isLoading, error } = useListings();
+  const [selectedListing, setSelectedListing] = useState<ListingViewModel | null>(null);
 
   useEffect(() => {
     console.log("Listings data:", listings);
@@ -32,10 +35,22 @@ export const ListingsView = () => {
   }
 
   return (
-    <Stack as="section" gap={4}>
-      {listings.map((listing) => (
-        <ListingCard key={listing.id} listing={listing} />
-      ))}
-    </Stack>
+    <>
+      <Stack as="section" gap={4}>
+        {listings.map((listing) => (
+          <ListingCard 
+            key={listing.id} 
+            listing={listing} 
+            onViewDetails={setSelectedListing}
+          />
+        ))}
+      </Stack>
+      
+      <ListingDetail 
+        listing={selectedListing} 
+        open={!!selectedListing} 
+        onClose={() => setSelectedListing(null)} 
+      />
+    </>
   );
 };

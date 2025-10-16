@@ -4,9 +4,10 @@ import type { ListingViewModel } from "@/types/listing";
 
 type Props = {
   listing: ListingViewModel;
+  onViewDetails: (listing: ListingViewModel) => void;
 };
 
-export const ListingCard = ({ listing }: Props) => {
+export const ListingCard = ({ listing, onViewDetails }: Props) => {
   return (
     <Card.Root variant="outline" shadow="sm">
       <Card.Body gap="3">
@@ -30,7 +31,7 @@ export const ListingCard = ({ listing }: Props) => {
       </Card.Body>
       <Card.Footer justifyContent="space-between" alignItems="center">
         <Text fontWeight="medium">{listing.priceLabel}</Text>
-        <Button size="sm" variant="outline" colorScheme="teal">
+        <Button size="sm" variant="outline" colorScheme="teal" onClick={() => onViewDetails(listing)}>
           View
         </Button>
       </Card.Footer>
