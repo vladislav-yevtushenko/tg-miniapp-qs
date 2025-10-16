@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react";
-import { Children } from "react";
+import { Children, useState } from "react";
 
 import {
   Avatar,
@@ -24,12 +24,15 @@ import {
   FaEnvelope,
   FaShoppingCart,
   FaShoppingBag,
+  FaSearch,
 } from "react-icons/fa";
 import { useTelegramContext } from "providers/telegramContext";
+import { ProfileDrawer } from "components/profile/ProfileDrawer";
 
 export const AppLayout = ({ children }: PropsWithChildren) => {
   const { user } = useTelegramContext();
   const cards = Children.toArray(children);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   return (
     <Flex direction="column" height="100vh" bg="gray.50">
@@ -58,9 +61,12 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
       <Box as="footer" bg="white" borderTopWidth="1px" px={4} py={3}>
         <Container maxW="container.md">
           <Flex align="center" gap={4}>
-            <Flex flex="1" justify="flex-start">
+            <Flex flex="1" justify="flex-start" gap={2}>
               <IconButton aria-label="Home" variant="ghost" colorScheme="gray">
                 <FaHome />
+              </IconButton>
+              <IconButton aria-label="Search" variant="ghost" colorScheme="gray">
+                <FaSearch />
               </IconButton>
             </Flex>
             <Flex flex="1" justify="center">
@@ -96,7 +102,7 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
                         <MenuItem value="signin">
                           <FaSignInAlt /> Sign In
                         </MenuItem>
-                        <MenuItem value="profile">
+                        <MenuItem value="profile" onClick={() => setIsProfileOpen(true)}>
                           <FaUser /> Profile
                         </MenuItem>
                         <MenuItem value="messages">
@@ -117,6 +123,8 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
           </Flex>
         </Container>
       </Box>
+
+      <ProfileDrawer open={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
     </Flex>
   );
 };
