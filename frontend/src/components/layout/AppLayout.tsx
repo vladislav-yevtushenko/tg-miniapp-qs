@@ -26,6 +26,7 @@ import {
   FaShoppingBag,
   FaSearch,
 } from "react-icons/fa";
+import { LuBell } from "react-icons/lu";
 import { useTelegramContext } from "providers/telegramContext";
 import { ProfileDrawer } from "components/profile/ProfileDrawer";
 
@@ -60,71 +61,78 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
 
       <Box as="footer" bg="white" borderTopWidth="1px" px={4} py={3}>
         <Container maxW="container.md">
-          <Flex align="center" gap={4}>
-            <Flex flex="1" justify="flex-start" gap={2}>
-              <IconButton aria-label="Home" variant="ghost" colorScheme="gray">
-                <FaHome />
-              </IconButton>
-              <IconButton aria-label="Search" variant="ghost" colorScheme="gray">
-                <FaSearch />
-              </IconButton>
-            </Flex>
-            <Flex flex="1" justify="center">
-              <IconButton
-                aria-label="Add item"
-                colorScheme="teal"
-                rounded="full"
-                size="lg"
-                shadow="md"
-              >
-                <FaPlus />
-              </IconButton>
-            </Flex>
-            <Flex flex="1" justify="flex-end">
-              {user && (
-                <MenuRoot>
-                  <MenuTrigger asChild>
-                    <Box cursor="pointer">
-                      <Avatar.Root size="md">
-                        <Avatar.Fallback name={user.first_name} />
-                        {user.photo_url && (
-                          <Avatar.Image
-                            src={user.photo_url}
-                            alt={`${user.first_name}'s profile picture`}
-                          />
-                        )}
-                      </Avatar.Root>
-                    </Box>
-                  </MenuTrigger>
-                  <Portal>
-                    <MenuPositioner>
-                      <MenuContent>
-                        <MenuItem value="signin">
-                          <FaSignInAlt /> Sign In
-                        </MenuItem>
-                        <MenuItem value="profile" onClick={() => setIsProfileOpen(true)}>
-                          <FaUser /> Profile
-                        </MenuItem>
-                        <MenuItem value="messages">
-                          <FaEnvelope /> Messages
-                        </MenuItem>
-                        <MenuItem value="order">
-                          <FaShoppingCart /> Orders
-                        </MenuItem>
-                        <MenuItem value="purchases">
-                          <FaShoppingBag /> Purchases
-                        </MenuItem>
-                      </MenuContent>
-                    </MenuPositioner>
-                  </Portal>
-                </MenuRoot>
-              )}
-            </Flex>
+          <Flex justifyContent="space-between" gap={4}>
+            <IconButton aria-label="Home" variant="ghost" colorScheme="gray">
+              <FaHome />
+            </IconButton>
+            <IconButton aria-label="Search" variant="ghost" colorScheme="gray">
+              <FaSearch />
+            </IconButton>
+            <IconButton
+              aria-label="Add item"
+              colorScheme="teal"
+              rounded="full"
+              size="lg"
+              shadow="md"
+            >
+              <FaPlus />
+            </IconButton>
+            <IconButton
+              aria-label="Notifications"
+              variant="ghost"
+              colorScheme="gray"
+            >
+              <LuBell />
+            </IconButton>
+            {user && (
+              <MenuRoot>
+                <MenuTrigger asChild>
+                  <Box cursor="pointer">
+                    <Avatar.Root size="md">
+                      <Avatar.Fallback name={user.first_name} />
+                      {user.photo_url && (
+                        <Avatar.Image
+                          src={user.photo_url}
+                          alt={`${user.first_name}'s profile picture`}
+                        />
+                      )}
+                    </Avatar.Root>
+                  </Box>
+                </MenuTrigger>
+                <Portal>
+                  <MenuPositioner>
+                    <MenuContent>
+                      <MenuItem value="signin">
+                        <FaSignInAlt /> Sign In
+                      </MenuItem>
+                      <MenuItem
+                        value="profile"
+                        onClick={() => setIsProfileOpen(true)}
+                      >
+                        <FaUser /> Profile
+                      </MenuItem>
+                      <MenuItem value="messages">
+                        <FaEnvelope /> Messages
+                      </MenuItem>
+                      <MenuItem value="order">
+                        <FaShoppingCart /> Orders
+                      </MenuItem>
+                      <MenuItem value="purchases">
+                        <FaShoppingBag /> Purchases
+                      </MenuItem>
+                    </MenuContent>
+                  </MenuPositioner>
+                </Portal>
+              </MenuRoot>
+            )}
           </Flex>
         </Container>
       </Box>
 
-      <ProfileDrawer open={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+      <ProfileDrawer
+        open={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+      />
     </Flex>
   );
 };
