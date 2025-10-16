@@ -7,10 +7,24 @@ import {
   Container,
   Flex,
   IconButton,
+  MenuContent,
+  MenuItem,
+  MenuPositioner,
+  MenuRoot,
+  MenuTrigger,
+  Portal,
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { FaHome, FaPlus } from "react-icons/fa";
+import {
+  FaHome,
+  FaPlus,
+  FaSignInAlt,
+  FaUser,
+  FaEnvelope,
+  FaShoppingCart,
+  FaShoppingBag,
+} from "react-icons/fa";
 import { useTelegramContext } from "providers/telegramContext";
 
 export const AppLayout = ({ children }: PropsWithChildren) => {
@@ -62,15 +76,42 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
             </Flex>
             <Flex flex="1" justify="flex-end">
               {user && (
-                <Avatar.Root size="md">
-                  <Avatar.Fallback name={user.first_name} />
-                  {user.photo_url && (
-                    <Avatar.Image
-                      src={user.photo_url}
-                      alt={`${user.first_name}'s profile picture`}
-                    />
-                  )}
-                </Avatar.Root>
+                <MenuRoot>
+                  <MenuTrigger asChild>
+                    <Box cursor="pointer">
+                      <Avatar.Root size="md">
+                        <Avatar.Fallback name={user.first_name} />
+                        {user.photo_url && (
+                          <Avatar.Image
+                            src={user.photo_url}
+                            alt={`${user.first_name}'s profile picture`}
+                          />
+                        )}
+                      </Avatar.Root>
+                    </Box>
+                  </MenuTrigger>
+                  <Portal>
+                    <MenuPositioner>
+                      <MenuContent>
+                        <MenuItem value="signin">
+                          <FaSignInAlt /> Sign In
+                        </MenuItem>
+                        <MenuItem value="profile">
+                          <FaUser /> Profile
+                        </MenuItem>
+                        <MenuItem value="messages">
+                          <FaEnvelope /> Messages
+                        </MenuItem>
+                        <MenuItem value="order">
+                          <FaShoppingCart /> Orders
+                        </MenuItem>
+                        <MenuItem value="purchases">
+                          <FaShoppingBag /> Purchases
+                        </MenuItem>
+                      </MenuContent>
+                    </MenuPositioner>
+                  </Portal>
+                </MenuRoot>
               )}
             </Flex>
           </Flex>
