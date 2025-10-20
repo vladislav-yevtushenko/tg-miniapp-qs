@@ -29,11 +29,13 @@ import {
 import { LuBell } from "react-icons/lu";
 import { useTelegramContext } from "providers/telegramContext";
 import { ProfileDrawer } from "components/profile/ProfileDrawer";
+import { AddListingDrawer } from "components/listings/AddListingDrawer";
 
 export const AppLayout = ({ children }: PropsWithChildren) => {
   const { user } = useTelegramContext();
   const cards = Children.toArray(children);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isAddListingOpen, setIsAddListingOpen] = useState(false);
 
   return (
     <Flex direction="column" height="100vh" bg="gray.50">
@@ -74,6 +76,7 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
               rounded="full"
               size="lg"
               shadow="md"
+              onClick={() => setIsAddListingOpen(true)}
             >
               <FaPlus />
             </IconButton>
@@ -132,6 +135,10 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
       <ProfileDrawer
         open={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
+      />
+      <AddListingDrawer
+        open={isAddListingOpen}
+        onClose={() => setIsAddListingOpen(false)}
       />
     </Flex>
   );
