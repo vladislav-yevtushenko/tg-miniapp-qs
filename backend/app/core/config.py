@@ -31,5 +31,13 @@ class Settings(BaseSettings):
     telegram_bot_token: str = Field(default="", validation_alias="TELEGRAM_BOT_TOKEN")
     telegram_webhook_url: AnyHttpUrl | None = None
 
+    # S3-compatible storage settings
+    s3_endpoint_url: str | None = Field(default=None, validation_alias="S3_ENDPOINT_URL")
+    s3_access_key_id: str = Field(default="", validation_alias="S3_ACCESS_KEY_ID")
+    s3_secret_access_key: str = Field(default="", validation_alias="S3_SECRET_ACCESS_KEY")
+    s3_bucket_name: str = Field(default="marketplace-photos", validation_alias="S3_BUCKET_NAME")
+    s3_region: str = Field(default="us-east-1", validation_alias="S3_REGION")
+    s3_public_url_base: str | None = Field(default=None, validation_alias="S3_PUBLIC_URL_BASE")
+
 
 settings = Settings()

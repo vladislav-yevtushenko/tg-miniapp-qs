@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { apiClient } from "@/services/apiClient";
-import type { Listing, ListingViewModel } from "@/types/listing";
+import type { Listing, ListingViewModel, UserPublic } from "@/types/listing";
 
 type ListingApiResponse = {
   id: number;
@@ -11,7 +11,9 @@ type ListingApiResponse = {
   currency: string;
   seller_id: number;
   created_at: string;
-  photo_url?: string | null;
+  updated_at: string;
+  photos: string[];
+  seller: UserPublic;
 };
 
 const transformListing = (listing: ListingApiResponse): Listing => ({
@@ -22,9 +24,10 @@ const transformListing = (listing: ListingApiResponse): Listing => ({
   currency: listing.currency,
   sellerId: listing.seller_id,
   createdAt: listing.created_at,
-  photoUrl:
-    listing.photo_url ??
-    `https://picsum.photos/seed/listing-${listing.id}/200/200`,
+  updatedAt: listing.updated_at,
+  photos: listing.photos,
+  photoUrl: listing.photos[0] ?? `https://picsum.photos/seed/listing-${listing.id}/200/200`,
+  seller: listing.seller,
 });
 
 const formatPrice = (listing: Listing): ListingViewModel => ({

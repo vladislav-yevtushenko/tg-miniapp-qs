@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Badge,
   Box,
   Button,
   DrawerBackdrop,
@@ -17,7 +16,6 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { FaEnvelope, FaPhone, FaUser } from "react-icons/fa";
 import type { ListingViewModel } from "@/types/listing";
 
 interface ListingDetailProps {
@@ -29,14 +27,14 @@ interface ListingDetailProps {
 export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) => {
   if (!listing) return null;
 
-  // Mock seller data - in real app, this would come from API
-  const seller = {
-    name: "John Doe",
-    username: "johndoe",
-    photoUrl: null,
-    phone: "+1 234 567 8900",
-    email: "john@example.com",
-  };
+  // Get seller info from listing
+  const seller = listing.seller;
+  const sellerName = [seller.first_name, seller.last_name]
+    .filter(Boolean)
+    .join(" ");
+  const telegramLink = seller.username
+    ? `https://t.me/${seller.username}`
+    : `tg://user?id=${seller.telegram_id}`;
 
   return (
     <DrawerRoot open={open} onOpenChange={(e) => !e.open && onClose()} placement="end" size="md">
@@ -84,29 +82,18 @@ export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) =>
                 <Stack gap={3}>
                   <Flex align="center" gap={3}>
                     <Avatar.Root size="lg">
-                      <Avatar.Fallback name={seller.name} />
-                      {seller.photoUrl && (
-                        <Avatar.Image src={seller.photoUrl} alt={seller.name} />
+                      <Avatar.Fallback>{sellerName}</Avatar.Fallback>
+                      {seller.photo_url && (
+                        <Avatar.Image src={seller.photo_url} alt={sellerName} />
                       )}
                     </Avatar.Root>
                     <Box>
-                      <Text fontWeight="bold" fontSize="lg">{seller.name}</Text>
+                      <Text fontWeight="bold" fontSize="lg">{sellerName}</Text>
                       {seller.username && (
                         <Text color="gray.600">@{seller.username}</Text>
                       )}
                     </Box>
                   </Flex>
-
-                  <Stack gap={2} mt={2}>
-                    <Flex align="center" gap={2} color="gray.700">
-                      <FaPhone />
-                      <Text>{seller.phone}</Text>
-                    </Flex>
-                    <Flex align="center" gap={2} color="gray.700">
-                      <FaEnvelope />
-                      <Text>{seller.email}</Text>
-                    </Flex>
-                  </Stack>
                 </Stack>
               </Box>
             </Stack>
@@ -114,8 +101,16 @@ export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) =>
 
           <DrawerFooter>
             <Stack width="100%" gap={2}>
-              <Button colorScheme="teal" size="lg" width="100%">
-                Contact Seller
+              <Button
+                as="a"
+                href={telegramLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                colorScheme="teal"
+                size="lg"
+                width="100%"
+              >
+                Contact via Telegram
               </Button>
               <Button variant="outline" size="lg" width="100%" onClick={onClose}>
                 Close

@@ -20,6 +20,8 @@ import {
 import { useTelegramContext } from "providers/telegramContext";
 import { telegram } from "services/telegram";
 import { PhotoPicker } from "components/photos/PhotoPicker";
+import { useCreateListing } from "@/hooks/useCreateListing";
+import { useUploadPhotos } from "@/hooks/useUploadPhotos";
 
 interface AddListingDrawerProps {
   open: boolean;
@@ -30,11 +32,14 @@ const MAX_PHOTOS = 5;
 
 export const AddListingDrawer = ({ open, onClose }: AddListingDrawerProps) => {
   const { user } = useTelegramContext();
+  const createListing = useCreateListing();
+  const uploadPhotos = useUploadPhotos();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [photos, setPhotos] = useState<File[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const contactLink = useMemo(() => {
     if (!user) {
@@ -51,20 +56,61 @@ export const AddListingDrawer = ({ open, onClose }: AddListingDrawerProps) => {
     setDescription("");
     setPrice("");
     setPhotos([]);
+    setIsSubmitting(false);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsSubmitting(true);
 
-    if (typeof telegram.showPopup === "function") {
-      telegram.showPopup({
-        message: "Listing submitted! Connect the backend to publish it.",
+    try {
+      // Step 1: Create listing
+      const priceInMinorUnits = Math.round(parseFloat(price) * 100);
+      const listing = await createListing.mutateAsync({
+        title,
+        description,
+        price_minor_units: priceInMinorUnits,
+        currency: "KZT", // Default currency
+        category: null,
+        condition: null,
       });
-    } else {
-      window.alert("Listing submitted! Connect the backend to publish it.");
+
+      // Step 2: Upload photos if any
+      if (photos.length > 0) {
+        await uploadPhotos.mutateAsync({
+          listingId: listing.id,
+          photos,
+        });
+      }
+
+      // Success message
+      if (typeof telegram.showPopup === "function") {
+        telegram.showPopup({
+          message:
+            "Listing created! It will be visible after moderator approval.",
+        });
+      } else {
+        window.alert(
+          "Listing created! It will be visible after moderator approval."
+        );
+      }
+
+      resetForm();
+      onClose();
+    } catch (error) {
+      console.error("Failed to create listing:", error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Failed to create listing";
+
+      if (typeof telegram.showAlert === "function") {
+        telegram.showAlert(errorMessage);
+      } else {
+        window.alert(errorMessage);
+      }
+
+      setIsSubmitting(false);
     }
-    resetForm();
-    onClose();
   };
 
   useEffect(() => {
@@ -162,9 +208,12 @@ export const AddListingDrawer = ({ open, onClose }: AddListingDrawerProps) => {
               colorScheme="teal"
               type="submit"
               form="add-listing-form"
-              isDisabled={!title || !description || !price || !contactLink}
+              disabled={
+                !title || !description || !price || !contactLink || isSubmitting
+              }
+              loading={isSubmitting}
             >
-              Add listing
+              {isSubmitting ? "Creating..." : "Add listing"}
             </Button>
           </DrawerFooter>
         </DrawerContent>

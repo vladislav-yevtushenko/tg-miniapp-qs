@@ -20,6 +20,9 @@ python-dotenv = "^1.0.1"
 passlib = { version = "^1.7.4", extras = ["bcrypt"] }
 pyjwt = "^2.8.0"
 greenlet = "^3.2.4"
+psycopg2-binary = "^2.9.11"
+boto3 = "^1.40.60"
+python-multipart = "^0.0.20"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.2"

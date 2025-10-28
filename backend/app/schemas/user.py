@@ -20,3 +20,16 @@ class User(UserBase):
 
     class Config:
         from_attributes = True
+
+
+class UserPublic(BaseModel):
+    """Public user information for displaying in listings."""
+    id: int
+    telegram_id: int
+    username: str | None = None
+    first_name: str
+    last_name: str | None = None
+    photo_url: str | None = None
+
+    class Config:
+        from_attributes = True

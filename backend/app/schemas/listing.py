@@ -1,8 +1,8 @@
-"""Listing schemas."""
-
 from datetime import datetime
 
 from pydantic import BaseModel, Field, PositiveInt
+
+from app.schemas.user import UserPublic
 
 
 class ListingBase(BaseModel):
@@ -13,13 +13,24 @@ class ListingBase(BaseModel):
 
 
 class ListingCreate(ListingBase):
-    pass
+    category: str | None = Field(None, max_length=50)
+    condition: str | None = Field(None, max_length=20)
 
 
 class Listing(ListingBase):
     id: int
     seller_id: int
     created_at: datetime
+    updated_at: datetime
+    photos: list[str] = []
+
+    class Config:
+        from_attributes = True
+
+
+class ListingWithSeller(Listing):
+
+    seller: UserPublic
 
     class Config:
         from_attributes = True
