@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 import {
+  Box,
   Button,
   DrawerBackdrop,
   DrawerBody,
@@ -11,6 +12,7 @@ import {
   DrawerPositioner,
   DrawerRoot,
   Field,
+  Grid,
   Input,
   Stack,
   Textarea,
@@ -86,29 +88,8 @@ export const AddListingDrawer = ({ open, onClose }: AddListingDrawerProps) => {
       <DrawerPositioner>
         <DrawerContent>
           <DrawerCloseTrigger />
-          <DrawerHeader>Add new listing</DrawerHeader>
           <DrawerBody>
-            <Stack
-              as="form"
-              id="add-listing-form"
-              gap={5}
-              onSubmit={handleSubmit}
-            >
-              <Field.Root>
-                <Field.Label>Photos</Field.Label>
-                <PhotoPicker
-                  value={photos}
-                  onChange={setPhotos}
-                  maxPhotos={MAX_PHOTOS}
-                  accept="image/*"
-                  capture="environment"
-                />
-                <Field.HelperText>
-                  {photos.length > 0
-                    ? `Selected ${photos.length} photo${photos.length > 1 ? "s" : ""}`
-                    : `Add up to ${MAX_PHOTOS} photos or capture new ones with your camera.`}
-                </Field.HelperText>
-              </Field.Root>
+            <Stack as="form" id="add-listing-form" onSubmit={handleSubmit}>
               <Field.Root required>
                 <Field.Label>Item name</Field.Label>
                 <Input
@@ -128,6 +109,18 @@ export const AddListingDrawer = ({ open, onClose }: AddListingDrawerProps) => {
                   rows={4}
                 />
               </Field.Root>
+              <Field.Root>
+                <PhotoPicker
+                  value={photos}
+                  onChange={setPhotos}
+                  maxPhotos={MAX_PHOTOS}
+                  accept="image/*"
+                  capture="environment"
+                />
+                <Field.HelperText>
+                  Add up to {MAX_PHOTOS} photos
+                </Field.HelperText>
+              </Field.Root>
               <Field.Root required>
                 <Field.Label>Price</Field.Label>
                 <Input
@@ -144,8 +137,8 @@ export const AddListingDrawer = ({ open, onClose }: AddListingDrawerProps) => {
                 <Field.Label>Contact via Telegram</Field.Label>
                 <Input
                   value={contactLink}
-                  isReadOnly
-                  placeholder="Sign in to populate contact link"
+                  readOnly
+                  placeholder="Cannot populate contact link"
                 />
                 <Field.HelperText>
                   {contactLink

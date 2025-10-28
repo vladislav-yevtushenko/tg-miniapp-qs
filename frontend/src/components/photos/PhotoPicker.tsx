@@ -1,13 +1,14 @@
 import {
   Box,
+  Button,
   FileUpload,
   Float,
   Icon,
   useFileUploadContext,
 } from "@chakra-ui/react";
-import { LuUpload, LuX } from "react-icons/lu";
 import type { FileUploadFileChangeDetails } from "@chakra-ui/react";
 import { HiCamera } from "react-icons/hi";
+import { LuX } from "react-icons/lu";
 
 interface PhotoPickerProps {
   value: File[];
@@ -19,17 +20,23 @@ interface PhotoPickerProps {
 
 const DEFAULT_MAX_PHOTOS = 5;
 
-const PhotoUploadSlots = ({ maxFiles }: { maxFiles: number }) => {
+const FileUploadList = () => {
+  const fileUpload = useFileUploadContext();
+  const files = fileUpload.acceptedFiles;
+  if (files.length === 0) return null;
   return (
-    <Box display="grid" gap={2}>
-      <FileUpload.Dropzone>
-        <FileUpload.DropzoneContent>
-          <FileUpload.Trigger aChild>
-            <HiCamera /> Open Camera
-          </FileUpload.Trigger>
-        </FileUpload.DropzoneContent>
-      </FileUpload.Dropzone>
-    </Box>
+    <FileUpload.ItemGroup boxSize="20">
+      {files.map((file) => (
+        <FileUpload.Item file={file} key={file.name}>
+          <FileUpload.ItemPreviewImage />
+          <Float placement="top-end">
+            <FileUpload.ItemDeleteTrigger boxSize="4" layerStyle="fill.solid">
+              <LuX />
+            </FileUpload.ItemDeleteTrigger>
+          </Float>
+        </FileUpload.Item>
+      ))}
+    </FileUpload.ItemGroup>
   );
 };
 
@@ -38,7 +45,7 @@ export const PhotoPicker = ({
   onChange,
   maxPhotos = DEFAULT_MAX_PHOTOS,
   accept = "image/*",
-  capture = "environment",
+  capture = "user",
 }: PhotoPickerProps) => {
   const handleFileChange = ({ acceptedFiles }: FileUploadFileChangeDetails) => {
     onChange(acceptedFiles);
@@ -53,7 +60,13 @@ export const PhotoPicker = ({
       onFileChange={handleFileChange}
     >
       <FileUpload.HiddenInput />
-      <PhotoUploadSlots maxFiles={maxPhotos} />
+      <FileUpload.Trigger asChild>
+        <Button variant="outline" size="md">
+          <HiCamera />
+          Add Photos
+        </Button>
+      </FileUpload.Trigger>
+      <FileUploadList />
     </FileUpload.Root>
   );
 };
