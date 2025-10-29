@@ -8,7 +8,8 @@ import type { ListingViewModel } from "@/types/listing";
 
 export const ListingsView = () => {
   const { data: listings, isLoading, error } = useListings();
-  const [selectedListing, setSelectedListing] = useState<ListingViewModel | null>(null);
+  const [selectedListing, setSelectedListing] =
+    useState<ListingViewModel | null>(null);
 
   useEffect(() => {
     console.log("Listings data:", listings);
@@ -26,30 +27,22 @@ export const ListingsView = () => {
     );
   }
 
-  if (!listings?.length) {
-    return (
-      <p className="status-message">
-        No listings yet. Be the first to add one!
-      </p>
-    );
-  }
-
   return (
     <>
       <Stack as="section" gap={4}>
         {listings.map((listing) => (
-          <ListingCard 
-            key={listing.id} 
-            listing={listing} 
+          <ListingCard
+            key={listing.id}
+            listing={listing}
             onViewDetails={setSelectedListing}
           />
         ))}
       </Stack>
-      
-      <ListingDetail 
-        listing={selectedListing} 
-        open={!!selectedListing} 
-        onClose={() => setSelectedListing(null)} 
+
+      <ListingDetail
+        listing={selectedListing}
+        open={!!selectedListing}
+        onClose={() => setSelectedListing(null)}
       />
     </>
   );

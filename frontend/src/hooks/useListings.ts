@@ -26,7 +26,7 @@ const transformListing = (listing: ListingApiResponse): Listing => ({
   createdAt: listing.created_at,
   updatedAt: listing.updated_at,
   photos: listing.photos,
-  photoUrl: listing.photos[0] ?? `https://picsum.photos/seed/listing-${listing.id}/200/200`,
+  photoUrl: listing.photos[0],
   seller: listing.seller,
 });
 

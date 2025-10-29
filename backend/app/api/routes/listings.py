@@ -1,5 +1,4 @@
-"""Endpoints for marketplace listings."""
-
+import logging
 from typing import List
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
@@ -17,8 +16,12 @@ from app.services.storage import get_storage_service
 
 router = APIRouter()
 
+log = logging.getLogger(__name__)
 
-@router.get("/", response_model=List[ListingWithSeller], summary="List available products")
+
+@router.get(
+    "/", response_model=List[ListingWithSeller], summary="List available products"
+)
 async def list_listings(
     _: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -28,7 +31,7 @@ async def list_listings(
         # Query active listings with eager loading of seller and photos
         stmt = (
             select(ListingModel)
-            .where(ListingModel.status == "active")
+            # .where(ListingModel.status == "active")
             .options(
                 selectinload(ListingModel.seller),
                 selectinload(ListingModel.photos),
@@ -110,6 +113,7 @@ async def create_listing(
         )
 
     except Exception as e:
+        log.error(f"Error creating listing: {str(e)}")
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
