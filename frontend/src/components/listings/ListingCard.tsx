@@ -8,14 +8,20 @@ type Props = {
 };
 
 export const ListingCard = ({ listing, onViewDetails }: Props) => {
+  // Get the first photo - prefer thumbnail for performance
+  const firstPhoto = listing.photos[0];
+  const photoSrc = firstPhoto?.thumbnailData
+    ? `data:image/jpeg;base64,${firstPhoto.thumbnailData}`
+    : firstPhoto?.photoUrl || listing.photoUrl;
+
   return (
     <Card.Root variant="outline" shadow="sm">
       <Card.Body gap="3">
         <Flex align="center" gap={3}>
           <Avatar.Root size="lg" shape="rounded">
-            {listing.photoUrl && (
+            {photoSrc && (
               <Avatar.Image
-                src={listing.photoUrl}
+                src={photoSrc}
                 alt={`${listing.title} photo`}
               />
             )}

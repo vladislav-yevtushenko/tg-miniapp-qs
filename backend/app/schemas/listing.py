@@ -2,6 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field, PositiveInt
 
+from app.schemas.photo import PhotoResponse
 from app.schemas.user import UserPublic
 
 
@@ -22,7 +23,7 @@ class Listing(ListingBase):
     seller_id: int
     created_at: datetime
     updated_at: datetime
-    photos: list[str] = []
+    photos: list[PhotoResponse] = []
 
     class Config:
         from_attributes = True

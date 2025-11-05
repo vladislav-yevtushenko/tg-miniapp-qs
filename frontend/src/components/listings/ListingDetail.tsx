@@ -48,11 +48,11 @@ export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) =>
           
           <DrawerBody>
             <Stack gap={6}>
-              {/* Main Image */}
-              {listing.photoUrl && (
+              {/* Main Image - Use full resolution photoUrl, not thumbnail */}
+              {(listing.photos[0]?.photoUrl || listing.photoUrl) && (
                 <Box borderRadius="md" overflow="hidden">
                   <Image
-                    src={listing.photoUrl}
+                    src={listing.photos[0]?.photoUrl || listing.photoUrl}
                     alt={listing.title}
                     width="100%"
                     height="300px"

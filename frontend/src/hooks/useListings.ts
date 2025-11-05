@@ -1,7 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { apiClient } from "@/services/apiClient";
-import type { Listing, ListingViewModel, UserPublic } from "@/types/listing";
+import type { Listing, ListingViewModel, PhotoResponse, UserPublic } from "@/types/listing";
+
+type PhotoApiResponse = {
+  id: number;
+  photo_url: string;
+  display_order: number;
+  thumbnail_data: string | null;
+  file_size_bytes: number | null;
+  original_filename: string | null;
+  created_at: string;
+};
 
 type ListingApiResponse = {
   id: number;
@@ -12,9 +22,19 @@ type ListingApiResponse = {
   seller_id: number;
   created_at: string;
   updated_at: string;
-  photos: string[];
+  photos: PhotoApiResponse[];
   seller: UserPublic;
 };
+
+const transformPhoto = (photo: PhotoApiResponse): PhotoResponse => ({
+  id: photo.id,
+  photoUrl: photo.photo_url,
+  displayOrder: photo.display_order,
+  thumbnailData: photo.thumbnail_data,
+  fileSizeBytes: photo.file_size_bytes,
+  originalFilename: photo.original_filename,
+  createdAt: photo.created_at,
+});
 
 const transformListing = (listing: ListingApiResponse): Listing => ({
   id: listing.id,
@@ -25,8 +45,8 @@ const transformListing = (listing: ListingApiResponse): Listing => ({
   sellerId: listing.seller_id,
   createdAt: listing.created_at,
   updatedAt: listing.updated_at,
-  photos: listing.photos,
-  photoUrl: listing.photos[0],
+  photos: listing.photos.map(transformPhoto),
+  photoUrl: listing.photos[0]?.photo_url ?? null,
   seller: listing.seller,
 });
 

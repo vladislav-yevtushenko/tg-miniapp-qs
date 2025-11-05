@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "services/apiClient";
+import type { PhotoUploadResponse } from "@/types/listing";
 
 export const useUploadPhotos = () => {
   const queryClient = useQueryClient();
@@ -11,13 +12,13 @@ export const useUploadPhotos = () => {
     }: {
       listingId: number;
       photos: File[];
-    }): Promise<string[]> => {
+    }): Promise<PhotoUploadResponse[]> => {
       const formData = new FormData();
       photos.forEach((photo) => {
         formData.append("photos", photo);
       });
 
-      const response = await apiClient.post<string[]>(
+      const response = await apiClient.post<PhotoUploadResponse[]>(
         `/listings/${listingId}/photos`,
         formData,
         {

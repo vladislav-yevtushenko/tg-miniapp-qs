@@ -11,7 +11,9 @@ from app.dependencies.auth import get_current_user
 from app.models.listing import Listing as ListingModel
 from app.models.listing_photo import ListingPhoto
 from app.schemas.listing import Listing, ListingCreate, ListingWithSeller
+from app.schemas.photo import PhotoUploadResponse
 from app.schemas.user import User
+from app.services.image_processing import image_service
 from app.services.storage import get_storage_service
 
 router = APIRouter()
@@ -42,24 +44,9 @@ async def list_listings(
         result = await db.execute(stmt)
         listings = result.scalars().all()
 
-        # Transform to response schema with photos array
-        response_listings = []
-        for listing in listings:
-            listing_dict = {
-                "id": listing.id,
-                "title": listing.title,
-                "description": listing.description,
-                "price_minor_units": listing.price_minor_units,
-                "currency": listing.currency,
-                "seller_id": listing.seller_id,
-                "created_at": listing.created_at,
-                "updated_at": listing.updated_at,
-                "photos": [photo.photo_url for photo in listing.photos],
-                "seller": listing.seller,
-            }
-            response_listings.append(ListingWithSeller(**listing_dict))
-
-        return response_listings
+        # The photos relationship will automatically be serialized by Pydantic
+        # using the PhotoResponse schema defined in the Listing schema
+        return listings
 
     except Exception as e:
         raise HTTPException(
@@ -123,7 +110,7 @@ async def create_listing(
 
 @router.post(
     "/{listing_id}/photos",
-    response_model=List[str],
+    response_model=List[PhotoUploadResponse],
     summary="Upload photos for a listing",
 )
 async def upload_listing_photos(
@@ -131,7 +118,7 @@ async def upload_listing_photos(
     photos: List[UploadFile] = File(...),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
-) -> list[str]:
+) -> list[PhotoUploadResponse]:
     """Upload one or more photos for a listing.
 
     Only the listing owner can upload photos.
@@ -167,24 +154,46 @@ async def upload_listing_photos(
 
     try:
         storage_service = get_storage_service()
-        uploaded_urls = []
+        uploaded_photos = []
 
         for idx, photo in enumerate(photos):
-            # Upload to S3
+            # Read file contents for both upload and thumbnail generation
+            file_contents = await photo.read()
+            file_size = len(file_contents)
+
+            # Reset file pointer for storage upload
+            await photo.seek(0)
+
+            # Generate thumbnail from image data
+            try:
+                thumbnail_base64 = image_service.generate_thumbnail(file_contents)
+            except ValueError as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Failed to process image '{photo.filename}': {str(e)}",
+                )
+
+            # Upload to storage
             photo_url = await storage_service.upload_file(photo, folder="listings")
 
-            # Create database record
+            # Create database record with thumbnail
             display_order = len(existing_photos) + idx
             photo_record = ListingPhoto(
                 listing_id=listing_id,
                 photo_url=photo_url,
                 display_order=display_order,
+                thumbnail_data=thumbnail_base64,
+                file_size_bytes=file_size,
+                original_filename=photo.filename,
             )
             db.add(photo_record)
-            uploaded_urls.append(photo_url)
+
+            uploaded_photos.append(
+                PhotoUploadResponse(url=photo_url, thumbnail=thumbnail_base64)
+            )
 
         await db.commit()
-        return uploaded_urls
+        return uploaded_photos
 
     except ValueError as e:
         # Validation error
@@ -192,12 +201,15 @@ async def upload_listing_photos(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e),
         )
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
     except Exception as e:
         await db.rollback()
         # Clean up uploaded files
         storage_service = get_storage_service()
-        for url in uploaded_urls:
-            storage_service.delete_file(url)
+        for photo_resp in uploaded_photos:
+            storage_service.delete_file(photo_resp.url)
 
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
