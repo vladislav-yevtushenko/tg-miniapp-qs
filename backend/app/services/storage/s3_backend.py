@@ -56,7 +56,9 @@ class S3StorageService:
                     else:
                         self.s3_client.create_bucket(
                             Bucket=self.bucket_name,
-                            CreateBucketConfiguration={"LocationConstraint": settings.s3_region},
+                            CreateBucketConfiguration={
+                                "LocationConstraint": settings.s3_region
+                            },
                         )
 
                     # Set bucket policy to make objects publicly readable
@@ -105,7 +107,9 @@ class S3StorageService:
         file.file.seek(0)  # Reset to beginning
 
         if file_size > self.MAX_FILE_SIZE:
-            raise ValueError(f"File too large. Maximum size: {self.MAX_FILE_SIZE / 1024 / 1024}MB")
+            raise ValueError(
+                f"File too large. Maximum size: {self.MAX_FILE_SIZE / 1024 / 1024}MB"
+            )
 
     async def upload_file(self, file: UploadFile, folder: str = "listings") -> str:
         """Upload file to S3 and return public URL.
@@ -149,9 +153,7 @@ class S3StorageService:
                 if settings.s3_region == "us-east-1":
                     public_url = f"https://{self.bucket_name}.s3.amazonaws.com/{s3_key}"
                 else:
-                    public_url = (
-                        f"https://{self.bucket_name}.s3.{settings.s3_region}.amazonaws.com/{s3_key}"
-                    )
+                    public_url = f"https://{self.bucket_name}.s3.{settings.s3_region}.amazonaws.com/{s3_key}"
 
             return public_url
 

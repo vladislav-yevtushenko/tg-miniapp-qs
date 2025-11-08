@@ -12,7 +12,7 @@ export default defineConfig(({ command, mode }) => {
     plugins: [react(), tsconfigPaths()],
     server: {
       allowedHosts: [".audiohookserver.uk", "localhost"],
-      port: env.VITE_APP_PORT ? parseInt(env.VITE_APP_PORT) : 5173,
+      port: env.VITE_APP_PORT ? parseInt(env.VITE_APP_PORT) : 8080,
       proxy: {
         "/health": {
           target: env.VITE_APP_API_URL + "/api/v1/",

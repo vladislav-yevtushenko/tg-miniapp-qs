@@ -2,7 +2,6 @@
 
 import base64
 import io
-from typing import BinaryIO
 
 from PIL import Image
 
@@ -16,7 +15,9 @@ class ImageProcessingService:
     THUMBNAIL_FORMAT = "JPEG"
 
     @staticmethod
-    def generate_thumbnail(image_data: bytes, max_size: tuple[int, int] = THUMBNAIL_SIZE) -> str:
+    def generate_thumbnail(
+        image_data: bytes, max_size: tuple[int, int] = THUMBNAIL_SIZE
+    ) -> str:
         """Generate a thumbnail from image data and return as base64.
 
         Args:
@@ -39,7 +40,10 @@ class ImageProcessingService:
                 background = Image.new("RGB", image.size, (255, 255, 255))
                 if image.mode == "P":
                     image = image.convert("RGBA")
-                background.paste(image, mask=image.split()[-1] if image.mode in ("RGBA", "LA") else None)
+                background.paste(
+                    image,
+                    mask=image.split()[-1] if image.mode in ("RGBA", "LA") else None,
+                )
                 image = background
 
             # Create thumbnail (maintains aspect ratio)

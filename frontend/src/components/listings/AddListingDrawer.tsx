@@ -100,8 +100,14 @@ export const AddListingDrawer = ({ open, onClose }: AddListingDrawerProps) => {
     } catch (error) {
       console.error("Failed to create listing:", error);
 
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to create listing";
+      // Extract error message from API client error format
+      let errorMessage = "Failed to create listing";
+
+      if (error && typeof error === "object" && "message" in error) {
+        errorMessage = String(error.message);
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
 
       if (typeof telegram.showAlert === "function") {
         telegram.showAlert(errorMessage);

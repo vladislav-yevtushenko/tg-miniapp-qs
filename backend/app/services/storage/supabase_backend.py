@@ -21,7 +21,7 @@ class SupabaseStorageService:
         """Initialize Supabase Storage client."""
         # Import here to avoid requiring supabase-py if not using this backend
         try:
-            from supabase import create_client, Client
+            from supabase import Client, create_client
         except ImportError:
             raise ImportError(
                 "supabase-py is required for SupabaseStorageService. "
@@ -33,7 +33,9 @@ class SupabaseStorageService:
                 "SUPABASE_URL and SUPABASE_KEY must be set to use Supabase storage backend"
             )
 
-        self.client: Client = create_client(settings.supabase_url, settings.supabase_key)
+        self.client: Client = create_client(
+            settings.supabase_url, settings.supabase_key
+        )
         self.bucket_name = settings.supabase_bucket or "listing-photos"
 
         # Ensure bucket exists
@@ -49,8 +51,7 @@ class SupabaseStorageService:
             if self.bucket_name not in bucket_names:
                 # Create bucket with public access
                 self.client.storage.create_bucket(
-                    self.bucket_name,
-                    options={"public": True}
+                    self.bucket_name, options={"public": True}
                 )
         except Exception as e:
             # If bucket check fails, log but continue
@@ -80,7 +81,9 @@ class SupabaseStorageService:
         file.file.seek(0)  # Reset to beginning
 
         if file_size > self.MAX_FILE_SIZE:
-            raise ValueError(f"File too large. Maximum size: {self.MAX_FILE_SIZE / 1024 / 1024}MB")
+            raise ValueError(
+                f"File too large. Maximum size: {self.MAX_FILE_SIZE / 1024 / 1024}MB"
+            )
 
     async def upload_file(self, file: UploadFile, folder: str = "listings") -> str:
         """Upload file to Supabase Storage and return public URL.
@@ -108,16 +111,18 @@ class SupabaseStorageService:
             # Upload file
             contents = await file.read()
 
-            result = self.client.storage.from_(self.bucket_name).upload(
+            self.client.storage.from_(self.bucket_name).upload(
                 path=storage_path,
                 file=contents,
                 file_options={
                     "content-type": file.content_type or "image/jpeg",
-                }
+                },
             )
 
             # Get public URL
-            public_url_data = self.client.storage.from_(self.bucket_name).get_public_url(storage_path)
+            public_url_data = self.client.storage.from_(
+                self.bucket_name
+            ).get_public_url(storage_path)
 
             return public_url_data
 
@@ -138,7 +143,9 @@ class SupabaseStorageService:
             # Supabase URLs typically look like:
             # https://{project}.supabase.co/storage/v1/object/public/{bucket}/{path}
             if f"/storage/v1/object/public/{self.bucket_name}/" in url:
-                storage_path = url.split(f"/storage/v1/object/public/{self.bucket_name}/")[-1]
+                storage_path = url.split(
+                    f"/storage/v1/object/public/{self.bucket_name}/"
+                )[-1]
             else:
                 return False
 

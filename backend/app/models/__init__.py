@@ -1,6 +1,5 @@
 """Database models."""
 
-from app.models.favorite import Favorite  # noqa: F401
 from app.models.listing import Listing  # noqa: F401
 from app.models.listing_photo import ListingPhoto  # noqa: F401
 from app.models.user import User  # noqa: F401

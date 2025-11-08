@@ -25,7 +25,7 @@ log = logging.getLogger(__name__)
     "/", response_model=List[ListingWithSeller], summary="List available products"
 )
 async def list_listings(
-    _: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[ListingWithSeller]:
     """Get all active listings with seller information and photos."""
@@ -37,8 +37,7 @@ async def list_listings(
             .options(
                 selectinload(ListingModel.seller),
                 selectinload(ListingModel.photos),
-            )
-            .order_by(ListingModel.created_at.desc())
+            ).order_by(ListingModel.created_at.desc())
         )
 
         result = await db.execute(stmt)
@@ -69,7 +68,15 @@ async def create_listing(
     """Create a new listing.
 
     Listings are created with status='pending' and require moderator approval.
+    Only verified users can create listings.
     """
+    # Check if user is verified
+    if current_user.role == "unverified":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only verified users can create listings. Please verify your account first.",
+        )
+
     try:
         # Create new listing
         new_listing = ListingModel(

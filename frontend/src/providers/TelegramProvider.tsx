@@ -1,47 +1,24 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { PropsWithChildren } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { apiClient } from "services/apiClient";
-import { getInitData, initTelegram, getTelegramUser } from "services/telegram";
-import type { TelegramUser } from "types/user";
+import { initTelegram, getTelegramUser } from "services/telegram";
 import { type TelegramContextValue, TelegramContext } from "./telegramContext";
 
-const fetchTelegramProfile = async (): Promise<TelegramUser> => {
-  const initData = getInitData();
-  if (!initData) {
-    throw new Error("Missing Telegram init data");
-  }
-
-  const { data } = await apiClient.post("/telegram/auth", {
-    init_data: initData,
-  });
-  return data.user;
-};
-
 export const TelegramProvider = ({ children }: PropsWithChildren) => {
+  const [isInitialized, setIsInitialized] = useState(false);
+
   useEffect(() => {
     initTelegram();
+    setIsInitialized(true);
   }, []);
-
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["telegram", "user"],
-    queryFn: fetchTelegramProfile,
-    enabled: Boolean(getTelegramUser()),
-    staleTime: 5 * 60 * 1000,
-  });
 
   const value = useMemo<TelegramContextValue>(
     () => ({
       user: getTelegramUser(),
-      isLoading,
-      isAuthenticated: Boolean(data),
-      error: isError
-        ? error instanceof Error
-          ? error.message
-          : "Failed to load Telegram user"
-        : undefined,
+      isLoading: !isInitialized,
+      isAuthenticated: Boolean(getTelegramUser()),
+      error: undefined,
     }),
-    [data, error, isError, isLoading],
+    [isInitialized],
   );
 
   return (

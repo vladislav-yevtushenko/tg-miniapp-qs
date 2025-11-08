@@ -1,8 +1,8 @@
-"""Initial schema with user roles and listing approval
+"""initial_schema
 
-Revision ID: 0ecb4cccc083
+Revision ID: 98e9d986d936
 Revises: 
-Create Date: 2025-10-28 15:10:01.165577
+Create Date: 2025-11-08 13:35:18.207793
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '0ecb4cccc083'
+revision: str = '98e9d986d936'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,10 +28,8 @@ def upgrade() -> None:
     sa.Column('first_name', sa.String(length=100), nullable=False),
     sa.Column('last_name', sa.String(length=100), nullable=True),
     sa.Column('language_code', sa.String(length=10), nullable=True),
-    sa.Column('is_premium', sa.Boolean(), nullable=False),
     sa.Column('photo_url', sa.Text(), nullable=True),
-    sa.Column('role', sa.String(length=20), server_default='student', nullable=False),
-    sa.Column('is_active', sa.Boolean(), nullable=False),
+    sa.Column('role', sa.String(length=20), server_default='unverified', nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -62,25 +60,16 @@ def upgrade() -> None:
     op.create_index(op.f('ix_listings_id'), 'listings', ['id'], unique=False)
     op.create_index(op.f('ix_listings_seller_id'), 'listings', ['seller_id'], unique=False)
     op.create_index(op.f('ix_listings_status'), 'listings', ['status'], unique=False)
-    op.create_table('favorites',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('listing_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('user_id', 'listing_id', name='uq_user_listing')
-    )
-    op.create_index(op.f('ix_favorites_id'), 'favorites', ['id'], unique=False)
-    op.create_index(op.f('ix_favorites_listing_id'), 'favorites', ['listing_id'], unique=False)
-    op.create_index(op.f('ix_favorites_user_id'), 'favorites', ['user_id'], unique=False)
     op.create_table('listing_photos',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('listing_id', sa.Integer(), nullable=False),
     sa.Column('photo_url', sa.Text(), nullable=False),
     sa.Column('display_order', sa.Integer(), server_default='0', nullable=False),
+    sa.Column('thumbnail_data', sa.Text(), nullable=True),
+    sa.Column('file_size_bytes', sa.Integer(), nullable=True),
+    sa.Column('original_filename', sa.String(length=255), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
+    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['listing_id'], ['listings.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -95,10 +84,6 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_listing_photos_listing_id'), table_name='listing_photos')
     op.drop_index(op.f('ix_listing_photos_id'), table_name='listing_photos')
     op.drop_table('listing_photos')
-    op.drop_index(op.f('ix_favorites_user_id'), table_name='favorites')
-    op.drop_index(op.f('ix_favorites_listing_id'), table_name='favorites')
-    op.drop_index(op.f('ix_favorites_id'), table_name='favorites')
-    op.drop_table('favorites')
     op.drop_index(op.f('ix_listings_status'), table_name='listings')
     op.drop_index(op.f('ix_listings_seller_id'), table_name='listings')
     op.drop_index(op.f('ix_listings_id'), table_name='listings')

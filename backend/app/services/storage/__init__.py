@@ -7,7 +7,6 @@ from app.services.storage.base import StorageBackend
 from app.services.storage.s3_backend import S3StorageService
 from app.services.storage.supabase_backend import SupabaseStorageService
 
-
 # Singleton instance
 _storage_service: Union[S3StorageService, SupabaseStorageService, None] = None
 

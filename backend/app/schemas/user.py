@@ -17,6 +17,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: int
+    role: str  # unverified, verified, moderator, admin
 
     class Config:
         from_attributes = True
@@ -24,6 +25,7 @@ class User(UserBase):
 
 class UserPublic(BaseModel):
     """Public user information for displaying in listings."""
+
     id: int
     telegram_id: int
     username: str | None = None
