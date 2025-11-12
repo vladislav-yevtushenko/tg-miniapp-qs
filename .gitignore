@@ -15,3 +15,9 @@ frontend/.env
 .vscode/
 .idea/
 .DS_Store
+
+# env files
+**/.env.*
+
+# AI
+.cursor/mcp.json

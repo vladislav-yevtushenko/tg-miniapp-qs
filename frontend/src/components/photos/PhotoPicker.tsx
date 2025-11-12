@@ -1,9 +1,7 @@
 import {
-  Box,
   Button,
   FileUpload,
   Float,
-  Icon,
   useFileUploadContext,
 } from "@chakra-ui/react";
 import type { FileUploadFileChangeDetails } from "@chakra-ui/react";
@@ -61,7 +59,7 @@ export const PhotoPicker = ({
     >
       <FileUpload.HiddenInput />
       <FileUpload.Trigger asChild>
-        <Button variant="outline" size="md">
+        <Button variant="outline" size="md" colorPalette="primary">
           <HiCamera />
           Add Photos
         </Button>

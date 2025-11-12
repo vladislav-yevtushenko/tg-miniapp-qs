@@ -10,7 +10,6 @@ import {
   DrawerPositioner,
   DrawerRoot,
   Flex,
-  Portal,
   Text,
 } from "@chakra-ui/react";
 import { useTelegramContext } from "providers/telegramContext";
@@ -47,7 +46,7 @@ export const ProfileDrawer = ({ open, onClose }: ProfileDrawerProps) => {
                     {user.first_name} {user.last_name || ""}
                   </Text>
                   {user.username && (
-                    <Text fontSize="md" color="gray.600">
+                    <Text fontSize="md" color="fg.muted">
                       @{user.username}
                     </Text>
                   )}

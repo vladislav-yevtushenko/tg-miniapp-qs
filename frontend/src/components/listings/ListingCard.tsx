@@ -29,7 +29,7 @@ export const ListingCard = ({ listing, onViewDetails }: Props) => {
           </Avatar.Root>
           <Stack gap={1}>
             <Card.Title>{listing.title}</Card.Title>
-            <Card.Description color="gray.600">
+            <Card.Description color="fg.muted">
               {listing.description}
             </Card.Description>
           </Stack>
@@ -37,7 +37,7 @@ export const ListingCard = ({ listing, onViewDetails }: Props) => {
       </Card.Body>
       <Card.Footer justifyContent="space-between" alignItems="center">
         <Text fontWeight="medium">{listing.priceLabel}</Text>
-        <Button size="sm" variant="outline" colorScheme="teal" onClick={() => onViewDetails(listing)}>
+        <Button size="sm" variant="outline" colorPalette="primary" onClick={() => onViewDetails(listing)}>
           View
         </Button>
       </Card.Footer>

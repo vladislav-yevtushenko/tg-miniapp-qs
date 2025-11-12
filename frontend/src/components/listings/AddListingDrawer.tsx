@@ -1,18 +1,15 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 
 import {
-  Box,
   Button,
   DrawerBackdrop,
   DrawerBody,
   DrawerCloseTrigger,
   DrawerContent,
   DrawerFooter,
-  DrawerHeader,
   DrawerPositioner,
   DrawerRoot,
   Field,
-  Grid,
   Input,
   Stack,
   Textarea,
@@ -211,7 +208,7 @@ export const AddListingDrawer = ({ open, onClose }: AddListingDrawerProps) => {
               Cancel
             </Button>
             <Button
-              colorScheme="teal"
+              colorPalette="primary"
               type="submit"
               form="add-listing-form"
               disabled={

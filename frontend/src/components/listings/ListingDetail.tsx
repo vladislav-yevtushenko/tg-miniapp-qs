@@ -24,7 +24,11 @@ interface ListingDetailProps {
   onClose: () => void;
 }
 
-export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) => {
+export const ListingDetail = ({
+  listing,
+  open,
+  onClose,
+}: ListingDetailProps) => {
   if (!listing) return null;
 
   // Get seller info from listing
@@ -37,7 +41,12 @@ export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) =>
     : `tg://user?id=${seller.telegram_id}`;
 
   return (
-    <DrawerRoot open={open} onOpenChange={(e) => !e.open && onClose()} placement="end" size="md">
+    <DrawerRoot
+      open={open}
+      onOpenChange={(e) => !e.open && onClose()}
+      placement="end"
+      size="md"
+    >
       <DrawerBackdrop />
       <DrawerPositioner>
         <DrawerContent>
@@ -45,7 +54,7 @@ export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) =>
           <DrawerHeader>
             <Heading size="lg">{listing.title}</Heading>
           </DrawerHeader>
-          
+
           <DrawerBody>
             <Stack gap={6}>
               {/* Main Image - Use full resolution photoUrl, not thumbnail */}
@@ -63,22 +72,26 @@ export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) =>
 
               {/* Price */}
               <Box>
-                <Text fontSize="3xl" fontWeight="bold" color="teal.600">
+                <Text fontSize="3xl" fontWeight="bold" color="primary.fg">
                   {listing.priceLabel}
                 </Text>
               </Box>
 
               {/* Description */}
               <Box>
-                <Heading size="md" mb={2}>Description</Heading>
-                <Text color="gray.700" lineHeight="1.7">
+                <Heading size="md" mb={2} color="primary.fg">
+                  Description
+                </Heading>
+                <Text color="fg.muted" lineHeight="1.7">
                   {listing.description}
                 </Text>
               </Box>
 
               {/* Seller Information */}
               <Box>
-                <Heading size="md" mb={3}>Seller Information</Heading>
+                <Heading size="md" mb={3} color="primary.fg">
+                  Seller Information
+                </Heading>
                 <Stack gap={3}>
                   <Flex align="center" gap={3}>
                     <Avatar.Root size="lg">
@@ -88,9 +101,11 @@ export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) =>
                       )}
                     </Avatar.Root>
                     <Box>
-                      <Text fontWeight="bold" fontSize="lg">{sellerName}</Text>
+                      <Text fontWeight="bold" fontSize="lg" color="fg.muted">
+                        {sellerName}
+                      </Text>
                       {seller.username && (
-                        <Text color="gray.600">@{seller.username}</Text>
+                        <Text color="fg.muted">@{seller.username}</Text>
                       )}
                     </Box>
                   </Flex>
@@ -106,13 +121,18 @@ export const ListingDetail = ({ listing, open, onClose }: ListingDetailProps) =>
                 href={telegramLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                colorScheme="teal"
+                colorPalette="primary"
                 size="lg"
                 width="100%"
               >
                 Contact via Telegram
               </Button>
-              <Button variant="outline" size="lg" width="100%" onClick={onClose}>
+              <Button
+                variant="outline"
+                size="lg"
+                width="100%"
+                onClick={onClose}
+              >
                 Close
               </Button>
             </Stack>

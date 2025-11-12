@@ -30,6 +30,7 @@ import { LuBell } from "react-icons/lu";
 import { useTelegramContext } from "providers/telegramContext";
 import { ProfileDrawer } from "components/profile/ProfileDrawer";
 import { AddListingDrawer } from "components/listings/AddListingDrawer";
+import { ColorModeButton } from "components/ui/color-mode";
 
 export const AppLayout = ({ children }: PropsWithChildren) => {
   const { user } = useTelegramContext();
@@ -38,7 +39,7 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
   const [isAddListingOpen, setIsAddListingOpen] = useState(false);
 
   return (
-    <Flex direction="column" height="100vh" bg="gray.50">
+    <Flex direction="column" height="100vh" bg="bg.subtle">
       <Box as="main" flex="1" overflowY="auto" py={6}>
         <Container maxW="container.md">
           {cards.length > 0 ? (
@@ -47,13 +48,13 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
             <Box
               borderWidth="1px"
               borderStyle="dashed"
-              borderColor="gray.200"
+              borderColor="border.muted"
               borderRadius="lg"
               py={12}
               textAlign="center"
-              bg="white"
+              bg="bg.panel"
             >
-              <Text fontSize="md" color="gray.500">
+              <Text fontSize="md" color="fg.muted">
                 No items yet—start by adding your first listing.
               </Text>
             </Box>
@@ -61,18 +62,18 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
         </Container>
       </Box>
 
-      <Box as="footer" bg="white" borderTopWidth="1px" px={4} py={3}>
+      <Box as="footer" bg="bg.panel" borderTopWidth="1px" borderColor="border.subtle" px={4} py={3}>
         <Container maxW="container.md">
-          <Flex justifyContent="space-between" gap={4}>
-            <IconButton aria-label="Home" variant="ghost" colorScheme="gray">
+          <Flex justifyContent="space-between" alignItems="center" gap={4}>
+            <IconButton aria-label="Home" variant="ghost">
               <FaHome />
             </IconButton>
-            <IconButton aria-label="Search" variant="ghost" colorScheme="gray">
+            <IconButton aria-label="Search" variant="ghost">
               <FaSearch />
             </IconButton>
             <IconButton
               aria-label="Add item"
-              colorScheme="teal"
+              colorPalette="primary"
               rounded="full"
               size="lg"
               shadow="md"
@@ -80,10 +81,10 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
             >
               <FaPlus />
             </IconButton>
+            <ColorModeButton />
             <IconButton
               aria-label="Notifications"
               variant="ghost"
-              colorScheme="gray"
             >
               <LuBell />
             </IconButton>
