@@ -55,11 +55,14 @@ const formatPrice = (listing: Listing): ListingViewModel => ({
   priceLabel: `${(listing.priceMinorUnits / 100).toFixed(2)} ${listing.currency}`,
 });
 
-export const useListings = () => {
+export const useListings = (search?: string) => {
   return useQuery<ListingViewModel[]>({
-    queryKey: ["listings"],
+    queryKey: ["listings", search],
     queryFn: async () => {
-      const { data } = await apiClient.get<ListingApiResponse[]>("/listings");
+      const params = search ? { search } : {};
+      const { data } = await apiClient.get<ListingApiResponse[]>("/listings", {
+        params,
+      });
       console.log("Fetched listings:", data);
       return data.map((listing) => formatPrice(transformListing(listing)));
     },

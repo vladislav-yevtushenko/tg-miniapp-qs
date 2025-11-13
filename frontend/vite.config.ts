@@ -7,7 +7,6 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig(({ command, mode }) => {
   console.log(`Running Vite in ${mode} mode (${command})`);
   const env = loadEnv(mode, process.cwd(), "");
-  console.log("Environment Variables:", env);
   return {
     plugins: [react(), tsconfigPaths()],
     server: {

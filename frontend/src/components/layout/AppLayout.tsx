@@ -30,13 +30,24 @@ import { LuBell } from "react-icons/lu";
 import { useTelegramContext } from "providers/telegramContext";
 import { ProfileDrawer } from "components/profile/ProfileDrawer";
 import { AddListingDrawer } from "components/listings/AddListingDrawer";
+import { SearchDrawer } from "components/listings/SearchDrawer";
 import { ColorModeButton } from "components/ui/color-mode";
 
-export const AppLayout = ({ children }: PropsWithChildren) => {
+type AppLayoutProps = PropsWithChildren & {
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+};
+
+export const AppLayout = ({ children, searchQuery, onSearchChange }: AppLayoutProps) => {
   const { user } = useTelegramContext();
   const cards = Children.toArray(children);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isAddListingOpen, setIsAddListingOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  const handleSearch = (query: string) => {
+    onSearchChange(query);
+  };
 
   return (
     <Flex direction="column" height="100vh" bg="bg.subtle">
@@ -68,7 +79,11 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
             <IconButton aria-label="Home" variant="ghost">
               <FaHome />
             </IconButton>
-            <IconButton aria-label="Search" variant="ghost">
+            <IconButton 
+              aria-label="Search" 
+              variant="ghost"
+              onClick={() => setIsSearchOpen(true)}
+            >
               <FaSearch />
             </IconButton>
             <IconButton
@@ -140,6 +155,12 @@ export const AppLayout = ({ children }: PropsWithChildren) => {
       <AddListingDrawer
         open={isAddListingOpen}
         onClose={() => setIsAddListingOpen(false)}
+      />
+      <SearchDrawer
+        open={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        onSearch={handleSearch}
+        currentQuery={searchQuery}
       />
     </Flex>
   );

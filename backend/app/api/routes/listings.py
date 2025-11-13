@@ -25,20 +25,35 @@ log = logging.getLogger(__name__)
     "/", response_model=List[ListingWithSeller], summary="List available products"
 )
 async def list_listings(
+    search: str | None = None,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> list[ListingWithSeller]:
-    """Get all active listings with seller information and photos."""
+    """Get all active listings with seller information and photos.
+    
+    Args:
+        search: Optional search query to filter by title or description
+    """
     try:
-        # Query active listings with eager loading of seller and photos
+        # Base query with eager loading
         stmt = (
             select(ListingModel)
             # .where(ListingModel.status == "active")
             .options(
                 selectinload(ListingModel.seller),
                 selectinload(ListingModel.photos),
-            ).order_by(ListingModel.created_at.desc())
+            )
         )
+        
+        # Apply search filter if provided
+        if search:
+            search_pattern = f"%{search}%"
+            stmt = stmt.where(
+                (ListingModel.title.ilike(search_pattern))
+                | (ListingModel.description.ilike(search_pattern))
+            )
+        
+        stmt = stmt.order_by(ListingModel.created_at.desc())
 
         result = await db.execute(stmt)
         listings = result.scalars().all()
